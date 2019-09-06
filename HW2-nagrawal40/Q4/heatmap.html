@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lange="en">
+<!-- referenced - heatmap update example https://bl.ocks.org/iblind/b394c943fef0aedc569d -->
+<!-- referenced - http://bl.ocks.org/jfreels/6734823 -->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Heatmap</title>
+    <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+    <style type="text/css">
+        .btn {
+            display: inline;
+        }
+
+        .selectBox {
+            padding: 20 0 0 40;
+            border: 2px black;
+        }
+
+        rect.bordered {
+            stroke: #E6E6E6;
+            stroke-width: 2px;
+        }
+
+        text.mono {
+            font-size: 12px;
+            font-family: Consolas, courier;
+            color: black;
+        }
+
+        .center {
+            width: 10%;
+            padding: 10px 50px 10px 200px;
+            margin: 0px;
+        }
+
+        .hmTitle {
+            padding: 10px 50px 10px 140px;
+
+
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+
+
+    <div id="hmTitle" class="hmTitle">A Visualization of Ice and Fire</div>
+    <div id="selectBox" class="center">Season </div>
+
+    <div id="chart"></div>
+    <script type="text/javascript">
+        var margin = {
+                top: 10,
+                right: 0,
+                bottom: 100,
+                left: 30
+            },
+            width = 960 - margin.left - margin.right,
+            height = 430 - margin.top - margin.bottom,
+            gridSize = Math.floor(width / 24),
+            legendElementWidth = gridSize * 2.665,
+            colors = ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#253494", "#081d58"],
+            houses = ["Baratheon", "Greyjoy", "Lannister", "Martell", "Stark", "Targaryen", "Tyrell"],
+            episodes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+
+        var heatmap;
+        var legend;
+        var initialSeason = 1
+
+        var ddData = ["1", "2", "3", "4", "5", "6"];
+
+
+        function onchange() {
+            selectValue = d3.select('select').property('value')
+            d3.selectAll("svg").remove()
+            createHeatMap(selectValue)
+
+        };
+
+        createHeatMap(1);
+
+
+        var select = d3.select("#selectBox")
+            .append('select')
+            .on('change', onchange)
+
+        var options = select
+            .selectAll('option')
+            .data(ddData).enter()
+            .append('option')
+            .text(function(d) {
+                return d;
+            });
+
+        d3.select("#hmTitle")
+            .attr("text-anchor", "center")
+            .text("A Visualization of Ice and Fire")
+            .style("font-weight", "bold")
+            .style("font-size", "20px");
+
+        function createHeatMap(selectedSeason) {
+            console.log("season = " + selectedSeason)
+            d3.csv("heatmap.csv", function(d) {
+                    data = [
+                        [house = 1,
+                            value = +d.Baratheon,
+                            episode = +d.episode,
+                            season = parseInt(+d.season)
+                        ],
+
+                        [house = 2,
+                            value = +d.Greyjoy,
+                            episode = +d.episode,
+                            season = parseInt(+d.season)
+                        ],
+
+                        [house = 3,
+                            value = +d.Lannister,
+                            episode = +d.episode,
+                            season = parseInt(+d.season)
+                        ],
+
+                        [house = 4,
+                            value = +d.Martell,
+                            episode = +d.episode,
+                            season = parseInt(+d.season)
+                        ],
+
+                        [house = 5,
+                            value = +d.Stark,
+                            episode = +d.episode,
+                            season = parseInt(+d.season)
+                        ],
+
+                        [house = 6,
+                            value = +d.Targaryen,
+                            episode = +d.episode,
+                            season = parseInt(+d.season)
+                        ],
+
+                        [house = 7,
+                            value = +d.Tyrell,
+                            episode = +d.episode,
+                            season = parseInt(+d.season)
+                        ]
+                    ]
+
+                    return data;
+
+                },
+                function(error, data) {
+                    seasonData = [], seasonData1 = [], seasonData2 = [], seasonData3 = [], seasonData4 = [], seasonData5 = [], seasonData6 = [];
+
+                    for (i = 0; i < data.length; i++) {
+                        for (j = 0; j < 7; j++) {
+                            if (data[i][j][3] == 1) {
+
+                                seasonData1.push({
+                                    house: data[i][j][0],
+                                    value: data[i][j][1],
+                                    episode: data[i][j][2]
+                                })
+                            }
+                            if (data[i][j][3] == 2) {
+
+                                seasonData2.push({
+                                    house: data[i][j][0],
+                                    value: data[i][j][1],
+                                    episode: data[i][j][2]
+                                })
+                            }
+                            if (data[i][j][3] == 3) {
+
+                                seasonData3.push({
+                                    house: data[i][j][0],
+                                    value: data[i][j][1],
+                                    episode: data[i][j][2]
+                                })
+                            }
+                            if (data[i][j][3] == 4) {
+
+                                seasonData4.push({
+                                    house: data[i][j][0],
+                                    value: data[i][j][1],
+                                    episode: data[i][j][2]
+                                })
+                            }
+                            if (data[i][j][3] == 5) {
+
+                                seasonData5.push({
+                                    house: data[i][j][0],
+                                    value: data[i][j][1],
+                                    episode: data[i][j][2]
+                                })
+                            }
+                            if (data[i][j][3] == 6) {
+
+                                seasonData6.push({
+                                    house: data[i][j][0],
+                                    value: data[i][j][1],
+                                    episode: data[i][j][2]
+                                })
+                            }
+
+                        }
+                    }
+
+                    console.log("season again = " + selectedSeason)
+
+                    if (selectedSeason == 1) {
+                        console.log("match 1")
+                        seasonData = seasonData1
+                    }
+                    if (selectedSeason == 2) {
+                        seasonData = seasonData2
+                    }
+                    if (selectedSeason == 3) {
+                        console.log("match 3")
+                        seasonData = seasonData3
+                    }
+                    if (selectedSeason == 4) {
+                        seasonData = seasonData4
+                    }
+                    if (selectedSeason == 5) {
+                        console.log("match 5")
+                        seasonData = seasonData5
+                    }
+                    if (selectedSeason == 6) {
+                        seasonData = seasonData6
+                    }
+
+                    var colorScale = d3.scale.quantile()
+                        .domain([0, (d3.max(seasonData, function(d) {
+                            return d.value;
+                        }) / 2), d3.max(seasonData, function(d) {
+                            return d.value;
+                        })])
+                        .range(colors);
+
+                    var svg = d3.select("#chart").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+                    var houseLabels = svg.selectAll(".houseLabel")
+                        .data(houses)
+                        .enter().append("text")
+                        .text(function(d) {
+                            return d
+                        })
+                        .attr("y", function(d, i) {
+                            return i * gridSize;
+                        })
+                        .style("text-anchor", "end")
+                        .attr("transform", "translate(50," + gridSize / 0.65 + ")")
+                        .attr("class", "mono");
+                        
+
+                    var EpisodeLabels = svg.selectAll(".episodeLabel")
+                        .data(episodes)
+                        .enter().append("text")
+                        .text(function(d) {
+                            return d
+                        })
+                        .attr("x", function(d, i) {
+                            return i * gridSize + 50;
+                        })
+                        .attr("y", gridSize + height + 10)
+                        .style("text-anchor", "middle")
+                        .attr("transform", "translate(" + gridSize / 2 + ", -40)")
+                        .attr("class", "mono");
+                        
+
+                    var heatMap = svg.selectAll(".appearance")
+                        .data(seasonData)
+                        .enter().append("rect")
+                        .attr("x", function(d) {
+                            return (d.episode) * gridSize + 20;
+                        })
+                        .attr("y", function(d) {
+                            return (d.house) * gridSize;
+                        })
+                        .attr("rx", 4)
+                        .attr("ry", 4)
+                        .attr("class", "hour bordered")
+                        .attr("width", gridSize)
+                        .attr("height", gridSize)
+                        .style("fill", colors[0]);
+
+                    heatMap.transition().duration(500)
+                        .style("fill", function(d) {
+                            return colorScale(d.value);
+                        });
+
+                    heatMap.append("title").text(function(d) {
+                        return d.value;
+                    });
+
+
+                    var legend = svg.selectAll(".legend")
+                        .data([0].concat(colorScale.quantiles()), function(d) {
+                            return d;
+                        });
+
+                    legend.enter().append("g")
+                        .attr("class", "legend");
+
+                    
+                    legend.append("rect")
+                        .attr("x", function(d, i) {
+                            return legendElementWidth * 0.5 * i + 50;
+                        })
+                        .attr("y", height + 50)
+                        .attr("width", legendElementWidth * 0.5)
+                        .attr("height", gridSize / 2)
+                        .style("fill", function(d, i) {
+                            return colors[i];
+                        });
+                    
+                    legend.append("text")
+        				.attr("class", "mono")
+        				.text(function(d) {return Math.round(d);})
+        				.attr("x", function(d, i){ return legendElementWidth * 0.51 * i + 48;})
+        				.attr("y", height+ gridSize + 41);
+			
+
+                    svg.append("text")
+                        .attr("text-anchor", "middle")
+                        .attr("x", 100)
+                        .style("font-weight", "bold")
+                        .style("font-size", "12px")
+                        .attr("y", height + 40)
+                        .text("No. of Appearances");
+
+
+                    
+                    // add labels to the axes
+                    svg.append("text")
+                        .attr("text-anchor", "middle") 
+                        .attr("transform", "translate(30," + gridSize / 1.3 + ")") 
+                        .text("House")
+                        .style("font-weight", "bold")
+                        .style("font-size", "12px");
+
+                    svg.append("text")
+                        .attr("text-anchor", "right") 
+                        .attr("x", gridSize + legendElementWidth * 4)
+                        .attr("y", gridSize + height - 32)
+                        .text("Episode")
+                        .style("font-weight", "bold")
+                        .style("font-size", "12px");
+
+
+
+
+                });
+        }
+    </script>
+
+
+
+</body>
+
+</html>

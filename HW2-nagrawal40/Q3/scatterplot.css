@@ -1,0 +1,53 @@
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #fff;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+circle.fixed {
+  fill: #ff0000;
+  stroke: #cc6600;
+  stroke-width: 2.0px;
+}
+
+text {
+  fill: #000;
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+.notfixed {
+  fill: #ccc !important;
+  stroke: #fff;
+  stroke: green;
+  stroke-width: 1.5px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.triangle{
+  fill: none;
+  stroke: red;
+}
+
+.circled{
+  fill: none;
+  stroke: blue;
+}
+
+.pageBreak { 
+page-break-after: always; 
+}
+

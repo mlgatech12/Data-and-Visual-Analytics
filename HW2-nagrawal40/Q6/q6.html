@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+    .states {
+        fill: none;
+        stroke: #fff;
+        stroke-linejoin: round;
+    }
+
+    .empty {
+        padding: 80px 0 10px 0;
+
+    }
+
+    .text {
+        padding: 60px 0 60px 0;
+        font-weight: bold;
+        font-size: 22px;
+
+    }
+
+    .tooltip {
+        background: #fff;
+        color: #000;
+        padding: 10px;
+        font-size: 12px;
+        opacity: 0.8;
+        border: 1px solid #000;
+
+    }
+</style>
+
+<script src="../lib/d3.v3.min.js"></script>
+<script src="../lib/topojson.v1.min.js"></script>
+<script src="../lib/d3-queue.v3.min.js"></script>
+<script src="../lib/d3.tip.v0.6.3.js"></script>
+<div class="empty">&nbsp;</div>
+<svg width="1200" height="1000" padding-top="60px"></svg>
+<script>
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height"),
+        margin = +svg.attr("padding-top");
+
+
+    var unemployment = d3.map();
+
+    var path = d3.geo.path();
+    var colors = [10000, 12000, 15000, 18000, 21000, 24000, 27000, 30000, 33000]
+    var legend_labels = ["$10,000", "$12,000", "$15,000", "$18,000", "$21,000", "$24,000", "$27,000", "$30,000", "$33,000"]
+
+
+
+    var color = d3.scale.threshold()
+        .domain(colors)
+        .range(["#f7fcfd", "#e5f5f9", "#ccece6", "#99d8c9", "#66c2a4", "#41ae76", "#238b45", "#006d2c", "#00441b"]);
+
+    var g = svg.append("g")
+        .attr("class", "key")
+        .attr("transform", "translate(0,40)");
+
+
+
+    d3.queue()
+        .defer(d3.json, "us.json")
+        .defer(d3.json, "median_earnings.json")
+        .defer(d3.csv, "median_ages.csv")
+        .await(ready);
+
+
+
+    function ready(error, us, median_earnings, median_ages) {
+
+        if (error) throw error;
+
+        earning = {};
+        median_earnings.forEach(function(d) {
+            earning[d.id] = +d.median_earnings;
+        });
+
+
+        //functions for adding tooltip
+
+        var tooltip = d3.tip().attr('class', 'tooltip').direction('e').html(function(d) {
+            var names = [];
+            var medianage = [];
+
+            median_ages.sort(function(a, b) {
+                return a.median_age - b.median_age;
+            });
+
+            median_ages.forEach(function(county) {
+                if (d.id == county.id) {
+                    console.log(county.name + "," + county.median_age)
+                    names.push(county.name);
+                    medianage.push(county.median_age);
+                }
+            })
+
+            var tipMsg = ""
+            for (i = 0;
+                (i < names.length && i < 5); i++) {
+                tipMsg += names[i] + " (Age: " + medianage[i] + ")" + "<br>";
+            }
+            return tipMsg;
+        });
+
+        svg.call(tooltip);
+
+
+        svg.append("g")
+            .attr("class", "states")
+            .selectAll("path")
+            .data(topojson.feature(us, us.objects.states).features)
+            .enter().append("path")
+            .attr("fill", function(d) {
+                return color(earning[d.id]);
+            })
+            .attr("d", path)
+            .on("mouseover", tooltip.show)
+            .on("mouseout", tooltip.hide);
+
+
+        svg.append("path")
+            .datum(topojson.mesh(us, us.objects.states, function(a, b) {
+                return a !== b;
+            }))
+            .attr("class", "states")
+            .attr("d", path);
+
+        // add legend
+        var legend = svg.selectAll("g.legend")
+            .data(colors)
+            .enter().append("g")
+            .attr("class", "legend");
+
+        var lc_w = 20,
+            lc_h = 20;
+
+        legend.append("rect")
+            .attr("x", width - 150)
+            .attr("y", function(d, i) {
+                return 100 + (i * lc_h) - 2 * lc_h;
+            })
+            .attr("width", lc_w)
+            .attr("height", lc_h)
+            .style("fill", function(d, i) {
+                return color(d);
+            })
+            .style("opacity", 0.8);
+
+        legend.append("text")
+            .attr("x", width - 190)
+            .attr("y", function(d, i) {
+                return 100 + (i * lc_h) - lc_h - 4;
+            })
+            .text(function(d, i) {
+                return legend_labels[i];
+            })
+            .style("font-size", "11px");
+
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("x", 480)
+            .attr("y", 16)
+            .text("Median Earnings by State")
+            .attr("class", "text");
+
+    }
+</script>
+
+</html>

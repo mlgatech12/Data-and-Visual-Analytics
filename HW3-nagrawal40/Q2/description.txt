@@ -1,0 +1,20 @@
+line23: 
+Create dataframe "incoming" with edge and its incoming weight using tab separated input file.
+Edge will be 2nd token (p(1)) and weight will be 3rd token (p(2)).
+Use filter to get weight values >= 5
+line28: 
+Create dataframe "outgoing" with edge and its outgoing weight using tab separated input file.
+Edge will be 1st token (p(0)) and weight will be 3rd token (p(2)).
+Use filter to get weight values >= 5
+line33:
+Create dataframe by grouping "incoming" on edge and aggregate using sum.
+line34:
+Create dataframe by grouping "outgoing" on edge and aggregate using sum.
+line37:
+Use outer join to create dataframe "combinedDf" by joining on edge.
+line40: 
+Replace the null weights in "combinedDf" by 0, and coalesce edge.
+line43:
+Create dataframe "output" using "combinedDf" edge and subtract "outgoing_weight" from "incoming_weight".
+line46:
+Map dataframe to create tab separated output and save it in file.

@@ -1,0 +1,6 @@
+Layout: Force Atlas 2 (Scaling 50.0, Prevent Overlap) 
+Statistics: Network Diameter to obtain Betweenness Centrality; Modularity for community detection.
+Node Color: Partition nodes on Modularity.
+Node Size: Based on Betweenness Centrality 
+Label size is based on node size.
+Used the degree filter to remove the labels for unimportant nodes.

@@ -1,0 +1,17 @@
+c(i) - Using "key collision" as the clustering method and "fingerprint" as the keying function, mass edit of 513 cells for column 'propertyzoningdesc'.
+
+c(ii) - GREL expression used to convert the column 'transactiondate' in required format - value.toDate('yyyy-MM-dd').toString('EEEE, MMMM dd, yyyy'). 
+All 10,000 cells  for column 'transactiondate' transformed.
+
+c(iii) - Example of column that contains Nominal data: 'regionidcounty'. This column has code for the county in which property is located. It can be considered as no-overlap and nominal dataset.
+Example of column that contains ordinal Ordinal data: 'buildingqualitytypeid'. This column has value representing overall assessment of condition of the building from best (lowest) to worst (highest). 
+It cannot be quantified how much is difference between the two values, only the building quality order can be determined. So it can be considered as having ordinal data.  
+
+c(iv) - On column 'bedroomcnt', Using  Edit Column -> Add column based on this column. 
+New column name: 'bedroomflag'
+GREL expression: if ((value.toNumber() > 3.0), true, false)
+New column 'bedroomflag' will have value 'true' if 'bedroomcnt' > 3.0, otherwise it will have value false.
+
+c(v) - GREL Expression to remove "*" in the string from column 'propertyzoningdesc': 
+if (isNotNull(value), replace(value,"*",""), value). 
+Text transform on 2199 cells for column 'propertyzoningdesc'. 

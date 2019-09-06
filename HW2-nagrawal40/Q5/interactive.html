@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<!-- referenced - http://bl.ocks.org/juan-cb/faf62e91e3c70a99a306 -->
+<meta charset="utf-8">
+<title>Interactive</title>
+<script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+
+<style>
+    body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        width: 1200px;
+        height: 500px;
+        position: relative;
+    }
+
+    #lineChart {
+        position: absolute;
+        width: 300;
+        height: 250;
+        padding: 100px 20px 0px 70px;
+
+
+    }
+
+    text {
+        font: 10px sans-serif;
+        color: white;
+    }
+
+    text.value {
+        font-size: 120%;
+        fill: white;
+    }
+
+    .axisHorizontal path {
+        fill: none;
+    }
+
+    .axisHorizontal .tick line {
+        stroke-width: 0;
+        stroke: rgba(0, 0, 0, 0.2);
+    }
+
+    .bar {
+        fill: steelblue;
+
+    }
+
+    .label {
+        font-size: 12px;
+        color: #000 !important;
+    }
+
+
+    #lineChart path {
+        stroke: steelblue;
+        stroke-width: 2;
+        fill: none;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: grey;
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
+
+    .y-axis {
+        stroke-width: 2;
+    }
+
+
+    }
+</style>
+
+<body>
+
+
+    <script>
+        data = [{club:'Manchester United',value:{year_2013:3165, year_2014:2810, year_2015:3100, year_2016:3317, year_2017:4583}},
+                {club:'Chelsea',value:{year_2013:901, year_2014:868, year_2015:1370, year_2016:1661, year_2017:1845}},
+                {club:'Manchester City',value:{year_2013:689, year_2014:863, year_2015:1380, year_2016:1921, year_2017:2083}},
+                {club:'Liverpool',value:{year_2013:651, year_2014:704, year_2015:982, year_2016:1548, year_2017:1492}},
+                {club:'Arsenal',value:{year_2013:1326, year_2014:1331, year_2015:1310, year_2016:2017, year_2017:1932}}]; 
+
+
+
+        var years = []
+        var yearsValues = []
+
+        var axisMargin = 20,
+            margin = 40,
+            valueMargin = 4,
+            width = 750,
+            height = 500,
+            barHeight = (height - axisMargin - margin * 2) * 0.4 / data.length,
+            barPadding = (height - axisMargin - margin * 2) * 0.5 / data.length,
+            data, bar, svg, scale, xAxis, labelWidth = 0;
+
+        max = d3.max(data, function(d) {
+            return combine(d.value);
+        });
+
+        svg = d3.select('body')
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+
+        bar = svg.selectAll("g")
+            .data(data)
+            .enter()
+            .append("g");
+
+        bar.attr("class", "bar")
+            .attr("cx", 0)
+            .attr("transform", function(d, i) {
+                return "translate(" + margin + "," + (i * (barHeight + barPadding) + barPadding) + ")";
+            });
+
+        bar.append("text")
+            .attr("class", "label")
+            .attr("y", barHeight / 2)
+            .attr("x", -5)
+            .attr("dy", ".35em") //vertical align middle
+            .text(function(d) {
+                return d.club;
+            }).each(function() {
+                labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+            });
+
+        scale = d3.scale.linear()
+            .domain([0, max])
+            .range([0, width - margin * 2 - labelWidth]);
+
+
+        bar.append("rect")
+            .attr("transform", "translate(" + labelWidth + ", 0)")
+            .attr("height", barHeight)
+            .attr("width", function(d) {
+                return scale(combine(d.value));
+            });
+
+        bar.append("text")
+            .attr("class", "value")
+            .attr("y", barHeight / 2)
+            .attr("dx", -valueMargin + labelWidth)
+            .attr("dy", ".35em")
+            .attr("text-anchor", "end")
+            .text(function(d) {
+                return ("$" + combine(d.value));
+            })
+            .attr("x", function(d) {
+                var width = this.getBBox().width;
+                return Math.max(width + valueMargin, scale(combine(d.value)));
+            });
+
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate(350,12)")
+            .text("English Football Club Values (in millions)")
+            .style("font-weight", "bold")
+            .style("font-size", "14px");
+
+
+
+        bar.on("mouseover", function(d) {
+            d3.select(this).style("fill", "green")
+            showLineChart(d.value);
+        });
+
+        bar.on("mouseout", function(d) {
+            d3.select(this).style("fill", "steelblue")
+            d3.selectAll("#lineChart").remove();
+        });
+
+
+
+        function combine(dataForYears) {
+            //console.log(dataForYears.year_2013 + dataForYears.year_2014 + dataForYears.year_2015 + dataForYears.year_2016 + dataForYears.year_2017);
+            return dataForYears.year_2013 + dataForYears.year_2014 + dataForYears.year_2015 + dataForYears.year_2016 + dataForYears.year_2017;
+        }
+
+        //return data for club in array format
+        function parseClubYearlyData(dataForYears) {
+            lineData = []
+            yearlyDataTemp = {
+                2013: dataForYears.year_2013,
+                2014: dataForYears.year_2014,
+                2015: dataForYears.year_2015,
+                2016: dataForYears.year_2016,
+                2017: dataForYears.year_2017
+            }
+            //console.log("yearlyDatatemp =", yearlyDataTemp)
+            for (var key in yearlyDataTemp) {
+                if (yearlyDataTemp.hasOwnProperty(key)) {
+                    lineData.push([parseInt(key), yearlyDataTemp[key]])
+
+                }
+            }
+            return lineData;
+
+
+        }
+
+
+        //function to show yearly line chart
+        function showLineChart(clubYearlyData) {
+            var lineData = parseClubYearlyData(clubYearlyData)
+            //console.log("linedata =", lineData)
+
+            var margin = {
+                    top: 20,
+                    right: 20,
+                    bottom: 30,
+                    left: 50
+                },
+                width = 300 - margin.left - margin.right,
+                height = 200 - margin.top - margin.bottom;
+
+
+            var x = d3.scale.linear()
+                .range([0, width])
+
+            var y = d3.scale.linear()
+                .range([height, 0]);
+
+            var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom")
+                .ticks(5);
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left");
+
+
+            var line = d3.svg.line()
+                .x(function(d) {
+                    return x(d.year) + 35;
+                })
+                .y(function(d) {
+                    return y(d.value);
+                });
+
+            var svg1 = d3.select("body").append("svg")
+                .attr("width", 400)
+                .attr("height", 400)
+                .attr("id", "lineChart");
+
+            var data = lineData.map(function(d) {
+                return {
+                    year: d[0],
+                    value: d[1]
+                };
+
+            });
+
+
+
+
+            x.domain(d3.extent(data, function(d) {
+                return d.year;
+            }));
+            y.domain(d3.extent(data, function(d) {
+                return d.value;
+            }));
+
+
+
+            svg1.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(35,0)")
+                .call(yAxis)
+                .append("text")
+                .attr("text-anchor", "end")
+                .attr("y", 8)
+                .attr("x", 30)
+                .text("Value");
+
+            svg1.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(35," + height + ")")
+                .call(xAxis)
+                .append("text")
+                .attr("y", -5)
+                .attr("x", 225)
+                .text("Year");
+
+
+            svg1.append("path")
+                .datum(data)
+                .attr("class", "line")
+                .attr("d", line);
+
+            svg1.append("text")
+                .attr("transform", "translate(35,200)")
+                .attr("text-anchor", "end")
+                .attr("x", "180")
+                .attr("y", "0")
+                .text("Club's Yearly Chart")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+        }
+    </script>
+</body>

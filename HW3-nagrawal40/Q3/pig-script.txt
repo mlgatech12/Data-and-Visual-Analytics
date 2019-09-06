@@ -1,0 +1,8 @@
+A = LOAD 's3://cse6242oan-2018spring-aws-big/*' USING PigStorage('\t')
+AS (bigram:chararray, year:int, occurrences:int, books:int);
+B = FILTER A BY occurrences >= 200 AND books >= 10;
+C = GROUP B BY bigram;
+D = FOREACH C GENERATE $0 as bigram, (DOUBLE) SUM($1.occurrences)/SUM($1.books) as average;
+E = ORDER D BY average desc, bigram asc;
+F = LIMIT E 10;
+STORE F INTO 's3://cse6242oan-nagrawal40/pig-big-output1.txt' USING PigStorage('\t');

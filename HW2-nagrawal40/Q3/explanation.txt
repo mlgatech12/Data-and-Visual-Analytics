@@ -1,0 +1,4 @@
+3.A.2- Feature combination of  Plasma Glucose vs. Insulin is better and shows better distinction of positive and negative classes. 
+In scatterplot for  BMI vs Blood Pressure, positive and negative classes are overlapping each other to a very large extent, making it harder to distinguish between them.
+3.C. Square root scale applies exponential transform of 0.5 to the input domain.  It can be applied to zero, positive and negative values. 
+Log scales can be applied to exclusively positive or exclusively negative domain. Domain should not include 0.

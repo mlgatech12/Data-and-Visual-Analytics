@@ -1,0 +1,2 @@
+I used linear scale on degree of node to scale the node sizes. 
+Linear scale helps in building smooth visualization where radii of node is proportional to the edges connected to it.

@@ -1,0 +1,3 @@
+Adding more columns and using linear regression with 75% data to train model, worsen the model performance. 
+Limiting columns and using Bayesian linear regression performs almost same as linear regression with 90% data.
+Most likely linear models perform better on lower volume and less variation in data set.

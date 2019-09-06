@@ -1,0 +1,39 @@
+Part 1: Evaluation results
+Mean Absolute Error:	       1656.147651
+Root Mean Squared Error:	   2456.983209
+Relative Absolute Error:	   0.276606
+Relative Squared Error: 	   0.089608
+Coefficient of Determination:  0.910392
+
+Part 2: Evaluation results after using 90% of data to train model
+Mean Absolute Error	        1265.001752
+Root Mean Squared Error	    1783.328763
+Relative Absolute Error	    0.253181
+Relative Squared Error	         0.067781
+Coefficient of Determination	0.932219
+
+Part 3(a): Choosing Linear regression and adding these additional columns: num-of-doors, num-of-cylinders and drive-wheels.
+Using 75% of data to train model:
+Mean Absolute Error	        1894.99559
+Root Mean Squared Error	    2739.245843
+Relative Absolute Error	    0.316498
+Relative Squared Error	         0.111379
+Coefficient of Determination	0.888621
+
+Part 3(b): Choosing Bayesian Linear regression and 75% of data to train model
+and these columns: make, body-style, wheel-base, engine-size, horsepower, peak-rpm, highway-mpg, price
+Negative Log Likelihood:        447.472777					
+Mean Absolute Error:            1699.990509	
+Root Mean Squared Error:        2711.088695	
+Relative Absolute Error:        0.283929	
+Relative Squared Error:         0.109101
+Coefficient of Determination:   0.890899
+
+Part 3(c): Choosing Bayesian Linear regression and 90% of data to train model
+and these columns: make, body-style, wheel-base, engine-size, horsepower, peak-rpm, highway-mpg, price
+Negative Log Likelihood:        171.788475					
+Mean Absolute Error:            1155.004182	
+Root Mean Squared Error:        1794.951186	
+Relative Absolute Error:        0.231166	
+Relative Squared Error:         0.068668
+Coefficient of Determination:   0.931332

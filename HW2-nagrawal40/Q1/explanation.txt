@@ -1,0 +1,12 @@
+Table design details:
+- Create Pivot table in Excel to  Organize the data for each country, origin and total population without repeating country.
+- Design the table layout to modify the borders.
+- Align headers based on data, left alignment for text and right alignment for numeric values. 
+- Add comma(,) separators for numeric data.
+
+Tableau Visualization: 
+- 4 crime rates to plot as line charts.
+- Labels for line ends (start and end of line) to reflect the rate drop in actual values.
+- Thickness of line is varying based on data range.
+- Different color for each measure for clarity.
+- Exported worksheet as image - included Title, View, Caption, Color legend.

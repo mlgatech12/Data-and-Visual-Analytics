@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v3.min.js"></script>
+<link rel="stylesheet" type="text/css" href="scatterplot.css">
+
+<body>
+    <!-- Referenced D3 scatterplot example: http://bl.ocks.org/weiglemc/6185069-->
+    <script>
+        var margin = {
+                top: 10,
+                right: 20,
+                bottom: 50,
+                left: 60
+            },
+            width = 960 - margin.left - margin.right,
+            height = 600 - margin.top - margin.bottom,
+            padding = -65;
+
+        var x = d3.scale.linear()
+            .range([0, width]);
+
+        var y = d3.scale.linear()
+            .range([height, 0]);
+
+        var positive1 = [],
+            negative1 = [],
+            positive2 = [],
+            negative2 = [];
+
+
+        //load data from csv
+        d3.csv("diabetes.csv", function(data) {
+            data.forEach(function(d) {
+                d.plasma_glucose = +d.plasma_glucose;
+                d.insulin = +d.insulin;
+                if (d.class == 1) {
+                    positive1.push(d);
+                } else {
+                    negative1.push(d);
+                }
+
+                //console.log(d);
+            })
+
+            data.forEach(function(d) {
+                d.bmi = +d.bmi;
+                d.blood_pressure = +d.blood_pressure;
+                if (d.class == 1) {
+                    positive2.push(d);
+                } else {
+                    negative2.push(d);
+                }
+
+                //console.log(d);
+            })
+
+            var svg1 = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+            var svg2 = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var svg3 = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var svg4 = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var svg5 = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+            // Compute the scales’ domains.
+            var xscale1 = x.domain(d3.extent(data, function(d) {
+                return d.plasma_glucose;
+            })).nice();
+            var yscale1 = y.domain(d3.extent(data, function(d) {
+                return d.insulin;
+            })).nice();
+
+
+            // Add the x-axis.
+            svg1.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.svg.axis().scale(xscale1).orient("bottom"));
+
+            // Add the y-axis.
+            svg1.append("g")
+                .attr("class", "y axis")
+                .call(d3.svg.axis().scale(yscale1).orient("left"));
+
+
+
+            // Add the points
+            svg1.selectAll("circles")
+                .data(negative1)
+                .enter().append("path")
+                .attr("class", "circled")
+                .attr("d", d3.svg.symbol().type("circle").size(50))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale1(d.plasma_glucose) + "," + yscale1(d.insulin) + ")";
+                });
+
+            svg1.selectAll("polygons")
+                .data(positive1)
+                .enter().append("path")
+                .attr("class", "triangle")
+                .attr("d", d3.svg.symbol().type("triangle-up").size(50))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale1(d.plasma_glucose) + "," + yscale1(d.insulin) + ")";
+                });
+
+            //Add title 
+            svg1.append("text")
+                .attr("transform", "translate(300,15)")
+                .text("Plasma Glucose vs. Insulin")
+                .style("font-weight", "bold")
+                .style("font-size", "20px");
+
+            // Add legends                     
+            svg1.append("circle")
+                .attr("cx", 30)
+                .attr("cy", 36)
+                .attr("r", 4)
+                .attr("class", "circled");
+
+            svg1.append("text")
+                .attr("transform", "translate(40,40)")
+                .text("Negative");
+
+            svg1.append("polygon")
+                .attr("stroke", "red")
+                .attr("stroke-width", 1.0)
+                .attr("fill", "none")
+                .attr("points", "30,60, 24,70, 34,70") // point1, point2, point3
+                .attr("class", "triangle")
+
+            svg1.append("text")
+                .attr("transform", "translate(40,70)")
+                .text("Positive");
+
+            // add labels to the axes
+            svg1.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (padding / 2) + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+                .text("Insulin")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+            svg1.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (width / 2) + "," + (height - (padding / 2)) + ")") // centre below axis
+                .text("Plasma Glucose")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+            svg1.append("div")
+                .attr("class", "pageBreak");
+
+
+            // Add 2nd graph
+            // Compute the scales’ domains.
+            var xscale2 = x.domain(d3.extent(data, function(d) {
+                return d.bmi;
+            })).nice();
+            var yscale2 = y.domain(d3.extent(data, function(d) {
+                return d.blood_pressure;
+            })).nice();
+
+
+            // Add the x-axis.
+            svg2.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.svg.axis().scale(xscale2).orient("bottom"));
+
+            // Add the y-axis.
+            svg2.append("g")
+                .attr("class", "y axis")
+                .call(d3.svg.axis().scale(yscale2).orient("left"));
+
+
+
+            // Add the points
+            svg2.selectAll("circles")
+                .data(negative1)
+                .enter().append("path")
+                .attr("class", "circled")
+                .attr("d", d3.svg.symbol().type("circle").size(50))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale2(d.bmi) + "," + yscale2(d.blood_pressure) + ")";
+                });
+
+            svg2.selectAll("polygons")
+                .data(positive1)
+                .enter().append("path")
+                .attr("class", "triangle")
+                .attr("d", d3.svg.symbol().type("triangle-up").size(50))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale2(d.bmi) + "," + yscale2(d.blood_pressure) + ")";
+                });
+
+            //Add title 
+            svg2.append("text")
+                .attr("transform", "translate(300,15)")
+                .text("BMI vs. Blood Pressure")
+                .style("font-weight", "bold")
+                .style("font-size", "20px");
+
+            // Add legends                     
+            svg2.append("circle")
+                .attr("cx", 30)
+                .attr("cy", 36)
+                .attr("r", 4)
+                .attr("class", "circled");
+
+            svg2.append("text")
+                .attr("transform", "translate(40,40)")
+                .text("Negative");
+
+            svg2.append("polygon")
+                .attr("stroke", "red")
+                .attr("stroke-width", 1.0)
+                .attr("fill", "none")
+                .attr("points", "30,60, 24,70, 34,70") // point1, point2, point3
+                .attr("class", "triangle")
+
+            svg2.append("text")
+                .attr("transform", "translate(40,70)")
+                .text("Positive");
+
+            // add labels to the axes
+            svg2.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (padding / 2) + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+                .text("Blood Pressure")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+            svg2.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (width / 2) + "," + (height - (padding / 2)) + ")") // centre below axis
+                .text("BMI")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+
+            svg2.append("div")
+                .attr("class", "pageBreak");
+
+
+
+            // Add 3rd graph
+
+            // Compute the scales’ domains.
+            var xscale3 = x.domain(d3.extent(data, function(d) {
+                return d.plasma_glucose;
+            })).nice();
+            var yscale3 = y.domain(d3.extent(data, function(d) {
+                return d.insulin;
+            })).nice();
+
+            var rscale3 = d3.scale.linear()
+                .domain([d3.min(data, function(d) {
+                    return d.plasma_glucose * d.insulin;
+                }), d3.max(data, function(d) {
+                    return d.plasma_glucose * d.insulin;
+                })])
+                .range([10, 30]);
+
+
+            // Add the x-axis.
+            svg3.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.svg.axis().scale(xscale3).orient("bottom"));
+
+            // Add the y-axis.
+            svg3.append("g")
+                .attr("class", "y axis")
+                .call(d3.svg.axis().scale(yscale3).orient("left"));
+
+
+
+            // Add the points
+            svg3.selectAll("circles")
+                .data(negative1)
+                .enter().append("path")
+                .attr("class", "circled")
+                .attr("d", d3.svg.symbol().type("circle").size(function(d) {
+                    return rscale3(d.plasma_glucose * d.insulin * 10.0);
+                }))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale3(d.plasma_glucose) + "," + yscale3(d.insulin) + ")";
+                });
+
+            svg3.selectAll("polygons")
+                .data(positive1)
+                .enter().append("path")
+                .attr("class", "triangle")
+                .attr("d", d3.svg.symbol().type("triangle-up").size(function(d) {
+                    return rscale3(d.plasma_glucose * d.insulin * 10.0);
+                }))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale3(d.plasma_glucose) + "," + yscale3(d.insulin) + ")";
+                });
+
+            //Add title 
+            svg3.append("text")
+                .attr("transform", "translate(300,15)")
+                .text("Plasma Glucose vs. Insulin (scaled symbols)")
+                .style("font-weight", "bold")
+                .style("font-size", "20px");
+
+            // Add legends                     
+            svg3.append("circle")
+                .attr("cx", 30)
+                .attr("cy", 36)
+                .attr("r", 4)
+                .attr("class", "circled");
+
+            svg3.append("text")
+                .attr("transform", "translate(40,40)")
+                .text("Negative");
+
+            svg3.append("polygon")
+                .attr("stroke", "red")
+                .attr("stroke-width", 1.0)
+                .attr("fill", "none")
+                .attr("points", "30,60, 24,70, 34,70") // point1, point2, point3
+                .attr("class", "triangle")
+
+            svg3.append("text")
+                .attr("transform", "translate(40,70)")
+                .text("Positive");
+
+            // add labels to the axes
+            svg3.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (padding / 2) + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+                .text("Insulin")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+
+            svg3.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (width / 2) + "," + (height - (padding / 2)) + ")") // centre below axis
+                .text("Plasma Glucose")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+            svg3.append("div")
+                .attr("class", "pageBreak");
+
+
+
+
+            // Add 4th graph
+
+            // Compute the scales’ domains.
+            var xscale4 = x.domain(d3.extent(data, function(d) {
+                return d.plasma_glucose;
+            })).nice();
+            var yscale4 = y.domain(d3.extent(data, function(d) {
+                return d.insulin;
+            })).nice();
+
+            var sqscale_y = d3.scale.sqrt()
+                .domain([d3.min(data, function(d) {
+                    return d.insulin;
+                }), d3.max(data, function(d) {
+                    return d.insulin;
+                })])
+                .range([height, 0]).nice();
+
+
+            // Add the x-axis.
+            svg4.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.svg.axis().scale(xscale4).orient("bottom"));
+
+            // Add the y-axis.
+            svg4.append("g")
+                .attr("class", "y axis")
+                .call(d3.svg.axis().scale(sqscale_y).orient("left"));
+
+            // Add the points
+            svg4.selectAll("circles")
+                .data(negative1)
+                .enter().append("path")
+                .attr("class", "circled")
+                .attr("d", d3.svg.symbol().type("circle").size(50))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale4(d.plasma_glucose) + "," + sqscale_y(d.insulin) + ")";
+                });
+
+            svg4.selectAll("polygons")
+                .data(positive1)
+                .enter().append("path")
+                .attr("class", "triangle")
+                .attr("d", d3.svg.symbol().type("triangle-up").size(50))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale4(d.plasma_glucose) + "," + sqscale_y(d.insulin) + ")";
+                });
+
+
+
+            //Add title 
+            svg4.append("text")
+                .attr("transform", "translate(300,15)")
+                .text("Plasma Glucose vs. Insulin (square-root-scaled)")
+                .style("font-weight", "bold")
+                .style("font-size", "20px");
+
+            // Add legends                     
+            svg4.append("circle")
+                .attr("cx", 30)
+                .attr("cy", 36)
+                .attr("r", 4)
+                .attr("class", "circled");
+
+            svg4.append("text")
+                .attr("transform", "translate(40,40)")
+                .text("Negative");
+
+            svg4.append("polygon")
+                .attr("stroke", "red")
+                .attr("stroke-width", 1.0)
+                .attr("fill", "none")
+                .attr("points", "30,60, 24,70, 34,70") // point1, point2, point3
+                .attr("class", "triangle")
+
+            svg4.append("text")
+                .attr("transform", "translate(40,70)")
+                .text("Positive");
+
+            // add labels to the axes
+            svg4.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (padding / 2) + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+                .text("Insulin")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+            svg4.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (width / 2) + "," + (height - (padding / 2)) + ")") // centre below axis
+                .text("Plasma Glucose")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+            svg4.append("div")
+                .attr("class", "pageBreak");
+
+
+            // Add 5th graph
+
+            // Compute the scales’ domains.
+            var xscale5 = x.domain(d3.extent(data, function(d) {
+                return d.plasma_glucose;
+            })).nice();
+            var yscale5 = y.domain(d3.extent(data, function(d) {
+                return d.insulin;
+            })).nice();
+
+            var logscale_y = d3.scale.log()
+                .clamp(true)
+                .domain([.0124123, d3.max(data, function(d) {
+                    return d.insulin;
+                })])
+                .range([height, 0]).nice();
+
+
+
+
+            // Add the x-axis.
+            svg5.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.svg.axis().scale(xscale4).orient("bottom"));
+
+            // Add the y-axis.
+            svg5.append("g")
+                .attr("class", "y axis")
+                .call(d3.svg.axis().scale(logscale_y).orient("left"));
+
+
+
+            // Add the points
+            svg5.selectAll("circles")
+                .data(negative1)
+                .enter().append("path")
+                .attr("class", "circled")
+                .attr("d", d3.svg.symbol().type("circle").size(50))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale5(d.plasma_glucose) + "," + logscale_y(d.insulin) + ")";
+                });
+
+            svg5.selectAll("polygons")
+                .data(positive1)
+                .enter().append("path")
+                .attr("class", "triangle")
+                .attr("d", d3.svg.symbol().type("triangle-up").size(50))
+                .attr("transform", function(d) {
+                    return "translate(" + xscale5(d.plasma_glucose) + "," + logscale_y(d.insulin) + ")";
+                });
+
+            //Add title 
+            svg5.append("text")
+                .attr("transform", "translate(300,15)")
+                .text("Plasma Glucose vs. Insulin (log-scaled)")
+                .style("font-weight", "bold")
+                .style("font-size", "20px");
+
+            // Add legends                     
+            svg5.append("circle")
+                .attr("cx", 30)
+                .attr("cy", 36)
+                .attr("r", 4)
+                .attr("class", "circled");
+
+            svg5.append("text")
+                .attr("transform", "translate(40,40)")
+                .text("Negative");
+
+            svg5.append("polygon")
+                .attr("stroke", "red")
+                .attr("stroke-width", 1.0)
+                .attr("fill", "none")
+                .attr("points", "30,60, 24,70, 34,70") // point1, point2, point3
+                .attr("class", "triangle")
+
+            svg5.append("text")
+                .attr("transform", "translate(40,70)")
+                .text("Positive");
+
+            // add labels to the axes
+            svg5.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (padding / 2) + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+                .text("Insulin")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+            svg5.append("text")
+                .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate(" + (width / 2) + "," + (height - (padding / 2)) + ")") // centre below axis
+                .text("Plasma Glucose")
+                .style("font-weight", "bold")
+                .style("font-size", "12px");
+
+            svg5.append("div")
+                .attr("class", "pageBreak");
+
+
+        });
+    </script>
+</body>
+
+</html>
